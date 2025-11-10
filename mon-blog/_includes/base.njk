@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+
+    <link rel="stylesheet" href="/css/style.css">
+
+</head>
+    </head>
+<body>
+
+    <header>
+        <h1>Mon Super Blog</h1>
+    </header>
+
+    <main>
+    {% if date %}
+      <p class="date-article">
+        Publié le : <time datetime="{{ date }}">{{ date | dateFr }}</time>
+      </p>
+    {% endif %}
+
+    {{ content | safe }}
+        {{ content | safe }}
+    </main>
+
+    <footer>
+        <p>&copy; 2025 {{ "Koubi Seri Fils" }}</p>
+    </footer>
+
+</body>
+</html>

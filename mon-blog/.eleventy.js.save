@@ -1,0 +1,16 @@
+module.exports = function(eleventyConfig) {
+
+  // Commande pour "passer" le dossier css au site final
+  eleventyConfig.addPassthroughCopy("css");
+
+  // C'est bien de dire à Eleventy quels sont tes dossiers
+  // (même si on garde les valeurs par défaut ici)
+  return {
+    dir: {
+      input: ".",
+      includes: "_includes",
+      output: "_site",
+    },
+  };
+};
+

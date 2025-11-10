@@ -1,0 +1,5 @@
+# Le dossier de sortie, Netlify va le créer pour nous
+_site
+
+# Les dépendances, Netlify va les installer
+node_modules
