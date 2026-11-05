@@ -1485,6 +1485,23 @@ body[data-workspace="registryPanel"] #registryPanel .reg-actions #btn-add-regist
 #registryPanel .reg-editor [hidden]{display:none!important}
 @media(max-width:700px){#registryPanel .reg-row-actions{grid-column:1/-1!important}#registryPanel .reg-view-button{width:100%;min-height:40px}}
 </style>
+
+<style id="gep-home-nav-registry-v3">
+#main-side-nav .gep-nav-registry{background:#e7f5f3;color:#086675;font-weight:750;border-left:4px solid #0f766e}
+#homePanel .gep-home-registry{background:linear-gradient(120deg,#e5f5f2,#f4fbfa);border:1px solid #8acac1;grid-column:1/-1;display:grid;grid-template-columns:40px minmax(0,1fr);align-items:center;text-align:left;gap:2px 12px;padding:18px}
+#homePanel .gep-home-registry i{grid-row:1/3;font-size:24px;color:#0f766e}
+#homePanel .gep-home-registry strong{font-size:17px;color:#12463f}
+#homePanel .gep-home-registry span{font-size:12px;color:#52736e}
+#homePanel .home-secondary[hidden],#gep-reg-test-picker[hidden]{display:none!important}
+#gep-reg-test-picker{margin-top:12px;border:1px solid #cbd5e1;border-radius:10px;padding:12px;background:#f8fafc;display:grid;gap:9px}
+#gep-reg-test-picker label{font-weight:700;color:#334155}
+#gep-reg-test-info{font-size:12px;color:#64748b;margin:0}
+#homePanel .home-sex-counts{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:8px!important;width:100%!important;max-width:580px;align-items:stretch}
+#homePanel .home-sex-chip{display:flex!important;min-width:0!important;width:100%!important;max-width:none!important;box-sizing:border-box;flex-direction:column;align-items:center;justify-content:center;gap:5px!important;white-space:normal!important;overflow-wrap:anywhere;text-align:center;border-radius:11px!important;padding:10px 5px!important;line-height:1.2!important}
+#homePanel .home-sex-chip i{font-size:14px!important}
+#homePanel .home-sex-chip strong{font-size:clamp(15px,4vw,22px)!important;font-weight:800;display:block}
+@media(max-width:400px){#homePanel .home-sex-counts{gap:5px!important}#homePanel .home-sex-chip{font-size:10px!important;padding:8px 3px!important}#homePanel .gep-home-registry{padding:14px}}
+</style>
 </head>
 <body>
 
@@ -9950,6 +9967,106 @@ document.addEventListener('DOMContentLoaded',()=>{
     document.getElementById(id)?.addEventListener(id==='lycam-search-candidate'?'input':'change',()=>{gepLycamPage=1},true);
   }
 });
+</script>
+
+<script id="gep-navigation-registry-v3">
+(function(){
+function init(){
+ const nav=document.getElementById('main-side-nav');
+ if(nav){
+  const find=t=>nav.querySelector('.side-link[data-target="'+t+'"]');
+  const heading=(text)=>{const d=document.createElement('div');d.className='sidebar-heading';d.textContent=text;return d};
+  const groups=[
+   ['Espace de travail',['homePanel','registryPanel','trackingGlobalPanel']],
+   ['Élèves et scolarité',['rosterPanel','classResultsPanel','rankingsPanel','statsPanel','cioPanel']],
+   ['Tests et orientation',['lycamMainPanel','paiMainPanel','coeffeMainPanel']],
+   ['Données et importation',['excel-center']]
+  ];
+  const first=nav.querySelector('.sidebar-heading');
+  nav.querySelectorAll('.sidebar-heading').forEach(x=>x.remove());
+  const frag=document.createDocumentFragment();
+  for(const [title,ids] of groups){
+   frag.append(heading(title));
+   for(const id of ids){const btn=find(id);if(btn)frag.append(btn)}
+   if(title==='Élèves et scolarité'){const b=nav.querySelector('#btn-add-student');if(b)frag.append(b)}
+   if(title==='Espace de travail'){const b=nav.querySelector('#dashboard-nav-toggle');if(b)frag.append(b)}
+  }
+  nav.prepend(frag);
+  find('registryPanel')?.classList.add('gep-nav-registry');
+ }
+ const home=document.querySelector('#homePanel .home-tiles');
+ if(home){
+  const find=t=>document.querySelector('#homePanel [data-home-target="'+t+'"]');
+  const registry=document.createElement('button');
+  registry.type='button';registry.className='home-tile gep-home-registry';
+  registry.dataset.homeTarget='registryPanel';
+  registry.innerHTML='<i class="fa fa-address-book" aria-hidden="true"></i><strong>Registre des consultations</strong><span>Visiteurs, entretiens et suivi</span>';
+  home.prepend(registry);
+  const groups=[
+   ['Suivi et orientation',['trackingGlobalPanel','lycamMainPanel','paiMainPanel','coeffeMainPanel']],
+   ['Gestion des élèves',['rosterPanel','classResultsPanel','cioPanel','excel-center']],
+   ['Analyses',['rankingsPanel','statsPanel']]
+  ];
+  const secondary=document.querySelector('#homePanel .home-secondary');
+  if(secondary)secondary.hidden=true;
+  home.querySelectorAll('.gep-home-section').forEach(x=>x.remove());
+  for(const [title,ids] of groups){
+   const h=document.createElement('h2');h.className='home-heading gep-home-section';h.textContent=title;
+   const row=document.createElement('div');row.className='home-tiles gep-home-section';
+   for(const id of ids){
+    let el=find(id);
+    if(el&&el.classList.contains('home-tile'))row.append(el);
+    else if(el){
+      const b=document.createElement('button');b.type='button';b.className='home-tile';
+      b.dataset.homeTarget=id;b.innerHTML='<strong>'+el.textContent+'</strong>';row.append(b);
+    }
+   }
+   if(row.children.length){home.parentNode.insertBefore(h,home.nextSibling);h.after(row)}
+  }
+  home.querySelectorAll('[data-home-target]').forEach(b=>{
+   if(b.dataset.gepBound)return;b.dataset.gepBound='1';
+   b.addEventListener('click',()=>document.querySelector('#main-side-nav .side-link[data-target="'+b.dataset.homeTarget+'"]')?.click());
+  });
+ }
+ // Dans le registre, la sélection d'un test présente uniquement les élèves inscrits au registre.
+ const bridge=document.querySelector('#registryPanel .reg-bridge');
+ if(bridge){
+  const picker=document.createElement('div');picker.id='gep-reg-test-picker';picker.hidden=true;
+  picker.innerHTML='<label for="gep-reg-test-select">Élève inscrit au registre</label><select id="gep-reg-test-select" class="select"></select><p id="gep-reg-test-info"></p><button type="button" class="btn" id="gep-reg-test-launch">Ouvrir le test pour cet élève</button>';
+  bridge.append(picker);
+  let selectedModule='';
+  bridge.querySelectorAll('[data-reg-module="lycam"],[data-reg-module="pai"],[data-reg-module="coeffe"]').forEach(btn=>{
+   btn.addEventListener('click',e=>{
+    e.stopImmediatePropagation();
+    selectedModule=btn.dataset.regModule;
+    const sel=document.getElementById('gep-reg-test-select');
+    sel.replaceChildren(new Option('Sélectionner un élève du registre',''));
+    const seen=new Set();
+    const students=typeof regStudentList==='function'?regStudentList():[];
+    const records=typeof regEntries==='function'?regEntries():[];
+    for(const r of records){
+     if(String(r.type||'').toLowerCase()!=='élève')continue;
+     const mat=String(r.matricule||'').trim().toUpperCase();
+     const st=students.find(x=>mat&&String(x.matricule||'').trim().toUpperCase()===mat);
+     if(!st||seen.has(mat))continue;seen.add(mat);
+     sel.add(new Option([st.nom,st.prenoms||st.prenom,st.classe].filter(Boolean).join(' · '),mat));
+    }
+    picker.hidden=false;
+    document.getElementById('gep-reg-test-info').textContent=seen.size+' élève(s) du registre disponibles. Les autres élèves ne figurent pas dans ce sélecteur.';
+    picker.scrollIntoView({block:'nearest',behavior:'smooth'});
+   },true);
+  });
+  document.getElementById('gep-reg-test-launch').addEventListener('click',()=>{
+   const mat=document.getElementById('gep-reg-test-select').value;
+   const st=(typeof regStudentList==='function'?regStudentList():[]).find(x=>String(x.matricule||'').trim().toUpperCase()===mat);
+   if(!st){alert('Sélectionnez un élève inscrit au registre.');return}
+   if(typeof regSelectStudent==='function')regSelectStudent(st);
+   if(typeof regBridge==='function')regBridge(selectedModule);
+  });
+ }
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+})();
 </script>
 </body>
 </html>
