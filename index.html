@@ -1471,6 +1471,20 @@ body[data-workspace="registryPanel"] #registryPanel .reg-actions #btn-add-regist
  #registryPanel .reg-form input,#registryPanel .reg-form select,#registryPanel .reg-form textarea{max-width:100%;min-width:0;width:100%}
 }
 </style>
+
+<style id="gep-registry-readonly-style">
+#registry-table tbody tr.reg-clickable-row{cursor:pointer}
+#registry-table tbody tr.reg-clickable-row:hover{background:#f8fafc}
+#registryPanel .reg-view-button{font-weight:650;white-space:nowrap}
+#registryPanel .gep-reg-mode{font-size:12px;font-weight:650;color:#475569;background:#f1f5f9;border-radius:8px;padding:9px 12px;margin:0 0 12px}
+#registryPanel .reg-editor[data-readonly="true"] input:disabled,
+#registryPanel .reg-editor[data-readonly="true"] select:disabled,
+#registryPanel .reg-editor[data-readonly="true"] textarea:disabled{opacity:1!important;-webkit-text-fill-color:#475569!important;color:#475569!important;background:#f1f5f9!important;border-color:#e2e8f0!important;cursor:default}
+#registryPanel .reg-editor[data-readonly="true"] .reg-student-results{display:none!important}
+#registryPanel .reg-editor .reg-actions{display:flex;gap:8px;flex-wrap:wrap}
+#registryPanel .reg-editor [hidden]{display:none!important}
+@media(max-width:700px){#registryPanel .reg-row-actions{grid-column:1/-1!important}#registryPanel .reg-view-button{width:100%;min-height:40px}}
+</style>
 </head>
 <body>
 
@@ -5630,7 +5644,7 @@ function regSelectStudent(st){regEl('reg-student-pick').value=String(st.matricul
 function regChosenStudent(){const mat=regEl('reg-matricule')?.value||regEl('reg-student-pick')?.value;return regStudentList().find(s=>String(s.matricule||'').trim().toUpperCase()===String(mat||'').trim().toUpperCase())}
 function regBridge(module){if(module==='bilan'){const nav=document.querySelector('[data-target="g80Hub"]');if(nav)nav.click();else alert('Ouvrez le module Bilans d’activité dans le menu.');return}const student=regChosenStudent();if(!student){alert('Sélectionnez un élève inscrit dans le formulaire du registre.');return}if(module==='dossier'){if(typeof openStudent==='function')openStudent(student);return}const target={lycam:'lycamMainPanel',pai:'paiMainPanel',coeffe:'coeffeMainPanel'}[module];const nav=document.querySelector('.side-link[data-target="'+target+'"]');if(!nav){alert('Ce module est indisponible.');return}nav.click();alert('Module ouvert pour '+[student.nom,student.prenoms].filter(Boolean).join(' ')+'. Sélectionnez sa classe et son nom dans le questionnaire avant de commencer le test.')}
 function regLocalTime(){const d=new Date();return new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,16)}
-function regReset(){regEditingId=null;['reg-name','reg-class','reg-matricule','reg-contact','reg-observation','reg-action','reg-agent','reg-next'].forEach(id=>{if(regEl(id))regEl(id).value=''});regEl('reg-reason').value='';regEl('reg-student-pick').value='';regEl('reg-student-search').value='';regEl('reg-student-results').hidden=true;regEl('reg-student-selected').textContent='Saisie libre possible pour les visiteurs externes.';regEl('reg-type').value='Élève';regEl('reg-status').value='À traiter';regEl('reg-datetime').value=regLocalTime();regEl('btn-add-registry').innerHTML='<i class="fa fa-save"></i> Enregistrer la consultation'}
+function regReset(){regSetReadOnly(false);if(regEl('gep-reg-mode'))regEl('gep-reg-mode').textContent='Nouvelle consultation';regEditingId=null;['reg-name','reg-class','reg-matricule','reg-contact','reg-observation','reg-action','reg-agent','reg-next'].forEach(id=>{if(regEl(id))regEl(id).value=''});regEl('reg-reason').value='';regEl('reg-student-pick').value='';regEl('reg-student-search').value='';regEl('reg-student-results').hidden=true;regEl('reg-student-selected').textContent='Saisie libre possible pour les visiteurs externes.';regEl('reg-type').value='Élève';regEl('reg-status').value='À traiter';regEl('reg-datetime').value=regLocalTime();regEl('btn-add-registry').innerHTML='<i class="fa fa-save"></i> Enregistrer la consultation'}
 function regDate(v){if(!v)return '—';const d=new Date(v);return isNaN(d)?String(v):d.toLocaleString('fr-FR',{dateStyle:'short',timeStyle:'short'})}
 let gepRegistryPage=1;
 function renderRegistry(){
@@ -5659,13 +5673,37 @@ function renderRegistry(){
  }
  pageItems.forEach((r,i)=>{const tr=document.createElement('tr');const fields=[String(filtered.length-i).padStart(3,'0'),regDate(r.at),r.name||'—',r.classe||'—',r.reason||'—',r.status||'À traiter',r.nextDate||'—'];fields.forEach((v,j)=>{const td=document.createElement('td');td.textContent=v;if(j===5)td.className='reg-status';tr.appendChild(td)});
  const td=document.createElement('td');td.className='reg-row-actions';
- const edit=document.createElement('button');edit.type='button';edit.className='btn ghost';edit.textContent='Ouvrir';edit.onclick=()=>regOpen(r.id);
- const del=document.createElement('button');del.type='button';del.className='btn ghost';del.textContent='Supprimer';del.onclick=async()=>{const ok=typeof appConfirm==='function'?await appConfirm('Supprimer définitivement cette consultation ?'):confirm('Supprimer définitivement cette consultation ?');if(!ok)return;allRegistry=regEntries().filter(x=>x.id!==r.id);storage.save('GlobalRegistryData',allRegistry);renderRegistry()};
- td.append(edit,del);tr.append(td);body.append(tr)});
+ const view=document.createElement('button');view.type='button';view.className='btn ghost reg-view-button';view.textContent='Voir la fiche';view.onclick=()=>regOpen(r.id);
+ td.append(view);tr.append(td);
+ tr.classList.add('reg-clickable-row');tr.tabIndex=0;tr.setAttribute('role','button');
+ tr.setAttribute('aria-label','Voir la fiche de '+(r.name||'ce visiteur'));
+ tr.addEventListener('click',e=>{if(e.target.closest('button,a,input,select'))return;regOpen(r.id)});
+ tr.addEventListener('keydown',e=>{if(e.target===tr&&(e.key==='Enter'||e.key===' ')){e.preventDefault();regOpen(r.id)}});
+ body.append(tr)});
  regEl('reg-count').textContent=filtered.length+' consultation(s) trouvée(s) sur '+total+' · '+pageItems.length+' affichée(s)';
 }
-function regOpen(id){const r=regEntries().find(x=>x.id===id);if(!r)return;regEditingId=id;regFillStudents();regEl('reg-student-pick').value=regStudentList().some(s=>String(s.matricule)===String(r.matricule))?String(r.matricule):'';regEl('reg-student-search').value=r.name||'';regEl('reg-student-results').hidden=true;regEl('reg-student-selected').textContent=r.matricule?'Consultation liée au matricule '+r.matricule:'Visiteur externe';const data={'reg-datetime':r.at,'reg-name':r.name,'reg-type':r.type,'reg-contact':r.contact,'reg-reason':r.reason,'reg-class':r.classe,'reg-matricule':r.matricule,'reg-status':r.status||'À traiter','reg-next':r.nextDate,'reg-agent':r.agent,'reg-observation':r.observation,'reg-action':r.action};Object.entries(data).forEach(([id,value])=>{const el=regEl(id);if(!el)return;if(id==='reg-datetime'){const d=new Date(value);el.value=value&&!isNaN(d)?new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,16):regLocalTime()}else if(id==='reg-reason'&&value&&![...el.options].some(o=>o.value===value)){el.add(new Option(value,value));el.value=value}else el.value=value||''});regEl('btn-add-registry').textContent='Enregistrer les modifications';regEl('reg-editor').open=true;regEl('reg-editor').scrollIntoView({behavior:'smooth',block:'start'})}
+
+function regSetReadOnly(readOnly){
+ const editor=regEl('reg-editor');if(!editor)return;
+ editor.dataset.readonly=readOnly?'true':'false';
+ const controls=editor.querySelectorAll('input,select,textarea');
+ controls.forEach(el=>{if(el.id==='reg-student-pick'||el.id==='reg-student-search'||el.closest('.reg-student-results')){el.disabled=readOnly;return;}el.disabled=readOnly});
+ const save=regEl('btn-add-registry');if(save){save.hidden=readOnly;save.disabled=readOnly;if(!readOnly)save.textContent='Enregistrer les modifications'}
+ let modify=regEl('gep-reg-modify');
+ if(!modify){
+  modify=document.createElement('button');modify.type='button';modify.id='gep-reg-modify';modify.className='btn registry-btn';
+  modify.textContent='Modifier la fiche';
+  modify.addEventListener('click',()=>{regSetReadOnly(false);regEl('reg-name')?.focus()});
+  editor.querySelector('.reg-actions')?.prepend(modify);
+ }
+ modify.hidden=!readOnly;
+ let indicator=regEl('gep-reg-mode');
+ if(!indicator){indicator=document.createElement('div');indicator.id='gep-reg-mode';indicator.className='gep-reg-mode';editor.querySelector('.reg-form')?.before(indicator)}
+ indicator.textContent=readOnly?'Consultation enregistrée — lecture seule':'Mode modification — enregistrez pour conserver vos changements';
+}
+function regOpen(id){const r=regEntries().find(x=>x.id===id);if(!r)return;regEditingId=id;regFillStudents();regEl('reg-student-pick').value=regStudentList().some(s=>String(s.matricule)===String(r.matricule))?String(r.matricule):'';regEl('reg-student-search').value=r.name||'';regEl('reg-student-results').hidden=true;regEl('reg-student-selected').textContent=r.matricule?'Consultation liée au matricule '+r.matricule:'Visiteur externe';const data={'reg-datetime':r.at,'reg-name':r.name,'reg-type':r.type,'reg-contact':r.contact,'reg-reason':r.reason,'reg-class':r.classe,'reg-matricule':r.matricule,'reg-status':r.status||'À traiter','reg-next':r.nextDate,'reg-agent':r.agent,'reg-observation':r.observation,'reg-action':r.action};Object.entries(data).forEach(([id,value])=>{const el=regEl(id);if(!el)return;if(id==='reg-datetime'){const d=new Date(value);el.value=value&&!isNaN(d)?new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,16):regLocalTime()}else if(id==='reg-reason'&&value&&![...el.options].some(o=>o.value===value)){el.add(new Option(value,value));el.value=value}else el.value=value||''});regSetReadOnly(true);regEl('reg-editor').open=true;regEl('reg-editor').scrollIntoView({behavior:'smooth',block:'start'})}
 function addRegistryEntry(){
+ if(regEl('reg-editor')?.dataset.readonly==='true')return;
  const get=id=>(regEl(id)?.value||'').trim(),name=get('reg-name'),reason=get('reg-reason');
  if(!name||!reason){alert('Veuillez renseigner le nom du visiteur et le motif de la consultation.');(!name?regEl('reg-name'):regEl('reg-reason'))?.focus();return}
  const raw=get('reg-datetime'),dt=raw?new Date(raw):new Date();if(isNaN(dt.getTime())){alert('Veuillez renseigner une date valide.');regEl('reg-datetime')?.focus();return}
@@ -5683,7 +5721,7 @@ function addRegistryEntry(){
 }
 function regExport(){const fields=[['at','Date'],['type','Type'],['name','Visiteur'],['classe','Classe'],['matricule','Matricule'],['contact','Contact'],['reason','Motif'],['status','Statut'],['nextDate','Prochain RDV'],['agent','Inspecteur'],['observation','Compte rendu'],['action','Actions']];const rows=[fields.map(x=>x[1]),...regEntries().map(r=>fields.map(x=>x[0]==='at'?regDate(r.at):r[x[0]]||''))];const csv='\ufeff'+rows.map(row=>row.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(';')).join('\r\n');const url=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));const a=document.createElement('a');a.href=url;a.download='registre_consultations_'+new Date().toISOString().slice(0,10)+'.csv';a.click();setTimeout(()=>URL.revokeObjectURL(url),2000)}
 function regPrint(){const rows=regEntries().slice().sort((a,b)=>String(b.at||'').localeCompare(String(a.at||'')));const html='<!doctype html><html lang="fr"><meta charset="utf-8"><title>Registre des consultations</title><style>body{font:12px Arial;padding:22px;color:#111}h1{font-size:20px}table{width:100%;border-collapse:collapse}th,td{border:1px solid #555;padding:6px;text-align:left;vertical-align:top}th{background:#eee}@media print{@page{size:A4 landscape;margin:12mm}}</style><h1>Registre des consultations — '+regSafe(regEl('school-year')?.value||'')+'</h1><p>Édité le '+regSafe(new Date().toLocaleDateString('fr-FR'))+' · '+rows.length+' consultation(s)</p><table><thead><tr><th>Date</th><th>Visiteur</th><th>Classe</th><th>Motif</th><th>Statut</th><th>RDV</th><th>Inspecteur</th></tr></thead><tbody>'+rows.map(r=>'<tr>'+[regDate(r.at),r.name,r.classe,r.reason,r.status,r.nextDate,r.agent].map(v=>'<td>'+regSafe(v||'—')+'</td>').join('')+'</tr>').join('')+'</tbody></table><p>Document professionnel — diffusion restreinte.</p></html>';const w=window.open('','_blank');if(!w){alert('Autorisez les fenêtres contextuelles pour imprimer.');return}w.document.write(html);w.document.close();w.focus();w.print()}
-document.addEventListener('DOMContentLoaded',()=>{regEl('btn-add-registry')?.addEventListener('click',addRegistryEntry);regEl('reg-student-search')?.addEventListener('input',()=>{regEl('reg-student-pick').value='';regRenderStudentMatches()});regEl('reg-student-search')?.addEventListener('keydown',e=>{if(e.key==='Escape'){regEl('reg-student-results').hidden=true}else if(e.key==='Enter'){const first=regEl('reg-student-results')?.querySelector('.reg-student-option');if(first){e.preventDefault();first.click()}}});regFillStudents();regEl('reg-student-pick')?.addEventListener('change',e=>{const st=regStudentList().find(s=>String(s.matricule)===e.target.value);if(st){regEl('reg-name').value=[st.nom,st.prenoms||st.prenom].filter(Boolean).join(' ');regEl('reg-class').value=st.classe||'';regEl('reg-matricule').value=st.matricule||'';regEl('reg-type').value='Élève'}});document.querySelectorAll('[data-reg-module]').forEach(b=>b.addEventListener('click',()=>regBridge(b.dataset.regModule)));document.addEventListener('gestionnaire:students-loaded',regFillStudents);regEl('reg-search')?.addEventListener('input',()=>{gepRegistryPage=1;renderRegistry()});regEl('reg-status-filter')?.addEventListener('change',()=>{gepRegistryPage=1;renderRegistry()});regEl('reg-cancel')?.addEventListener('click',regReset);regEl('reg-export')?.addEventListener('click',regExport);regEl('reg-print')?.addEventListener('click',regPrint);if(!regEl('reg-datetime')?.value)regEl('reg-datetime').value=regLocalTime()});
+document.addEventListener('DOMContentLoaded',()=>{regSetReadOnly(false);regEl('btn-add-registry')?.addEventListener('click',addRegistryEntry);regEl('reg-student-search')?.addEventListener('input',()=>{regEl('reg-student-pick').value='';regRenderStudentMatches()});regEl('reg-student-search')?.addEventListener('keydown',e=>{if(e.key==='Escape'){regEl('reg-student-results').hidden=true}else if(e.key==='Enter'){const first=regEl('reg-student-results')?.querySelector('.reg-student-option');if(first){e.preventDefault();first.click()}}});regFillStudents();regEl('reg-student-pick')?.addEventListener('change',e=>{const st=regStudentList().find(s=>String(s.matricule)===e.target.value);if(st){regEl('reg-name').value=[st.nom,st.prenoms||st.prenom].filter(Boolean).join(' ');regEl('reg-class').value=st.classe||'';regEl('reg-matricule').value=st.matricule||'';regEl('reg-type').value='Élève'}});document.querySelectorAll('[data-reg-module]').forEach(b=>b.addEventListener('click',()=>regBridge(b.dataset.regModule)));document.addEventListener('gestionnaire:students-loaded',regFillStudents);regEl('reg-search')?.addEventListener('input',()=>{gepRegistryPage=1;renderRegistry()});regEl('reg-status-filter')?.addEventListener('change',()=>{gepRegistryPage=1;renderRegistry()});regEl('reg-cancel')?.addEventListener('click',regReset);regEl('reg-export')?.addEventListener('click',regExport);regEl('reg-print')?.addEventListener('click',regPrint);if(!regEl('reg-datetime')?.value)regEl('reg-datetime').value=regLocalTime()});
 /* ====== TRACKING & COACHING GLOBAL LOGIC (NEW) ====== */
 function switchTrackingView(view) {
     document.getElementById('track-view-visits').style.display = (view === 'visits') ? 'flex' : 'none';
