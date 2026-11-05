@@ -1502,7 +1502,25 @@ body[data-workspace="registryPanel"] #registryPanel .reg-actions #btn-add-regist
 #homePanel .home-sex-chip strong{font-size:clamp(15px,4vw,22px)!important;font-weight:800;display:block}
 @media(max-width:400px){#homePanel .home-sex-counts{gap:5px!important}#homePanel .home-sex-chip{font-size:10px!important;padding:8px 3px!important}#homePanel .gep-home-registry{padding:14px}}
 </style>
-</head>
+<style id="gep-pai-mobile-list">
+@media(max-width:700px){
+ #pai-view-candidates>.toolbar{display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:9px!important}
+ #pai-view-candidates>.toolbar>.field{width:100%!important;min-width:0!important;max-width:none!important;flex:auto!important}
+ #pai-class-filter,#pai-search-candidate{width:100%!important;max-width:100%!important}
+ #pai-view-candidates>.table-wrap{overflow-x:hidden!important;max-width:100%;border:0;background:transparent}
+ #pai-candidates-table{display:block!important;width:100%!important;min-width:0!important}
+ #pai-candidates-table thead{display:none!important}
+ #pai-candidates-table tbody{display:grid!important;grid-template-columns:minmax(0,1fr);gap:9px}
+ #pai-candidates-table tbody tr{display:grid!important;grid-template-columns:minmax(0,1fr) auto;gap:6px 10px;min-width:0;padding:13px;border:1px solid #dce5eb;border-left:3px solid #0f766e;border-radius:10px;background:#fff}
+ #pai-candidates-table tbody td{display:block!important;min-width:0!important;width:auto!important;max-width:100%;padding:0!important;border:0!important;white-space:normal!important;overflow-wrap:anywhere;color:#475569;font-size:12px}
+ #pai-candidates-table tbody td:nth-child(2){grid-column:1/-1;grid-row:1;font-size:14px;font-weight:700;color:#0f172a}
+ #pai-candidates-table tbody td:nth-child(1){grid-column:1/-1;color:#64748b}
+ #pai-candidates-table tbody td:nth-child(3){grid-column:1}
+ #pai-candidates-table tbody td:nth-child(4){grid-column:1/-1}
+ #pai-candidates-table tbody td:nth-child(5){grid-column:1/-1;border-top:1px solid #f1f5f9!important;padding-top:9px!important}
+ #pai-candidates-table tbody td:nth-child(5) button{width:100%;min-height:38px}
+}
+</style></head>
 <body>
 
 <div class="container">
@@ -1877,10 +1895,10 @@ body[data-workspace="registryPanel"] #registryPanel .reg-actions #btn-add-regist
       </div>
       <div id="pai-view-candidates" style="display:flex;flex-direction:column;gap:12px;min-height:0">
         <div class="toolbar" style="margin-top:0">
-          <div class="field"><label class="label">Filtrer par classe</label><select id="pai-class-filter" class="select"><option value="__ALL__">Toutes les classes</option></select></div>
+          <div class="field"><label class="label">Filtrer par classe</label><select id="pai-class-filter" class="select"><option value="__ALL__">Choisir une classe</option></select></div>
           <div class="field" style="flex:1"><label class="label">Rechercher un élève</label><input id="pai-search-candidate" class="input" placeholder="Nom ou matricule..."></div>
         </div>
-        <div class="table-wrap"><table id="pai-candidates-table"><thead><tr><th>Matricule</th><th>Nom et prénoms</th><th>Classe</th><th>Dernière passation</th><th>Action</th></tr></thead><tbody></tbody></table></div>
+        <div class="table-wrap"><table id="pai-candidates-table"><thead><tr><th>Matricule</th><th>Nom et prénoms</th><th>Classe</th><th>Dernière passation</th><th>Action</th></tr></thead><tbody></tbody></table></div><div id="gep-pai-pages" class="gep-pages"></div>
       </div>
       <div id="pai-view-results" style="display:none;flex-direction:column;gap:12px;min-height:0">
         <div class="toolbar" style="margin-top:0"><div class="field" style="flex:1"><label class="label">Rechercher dans les passations</label><input id="pai-search-results" class="input" placeholder="Nom ou matricule..."></div><button type="button" class="btn ghost" id="btn-export-pai-all"><i class="fa fa-file-excel"></i> Exporter les passations</button></div>
@@ -2698,15 +2716,33 @@ function switchPAIView(view){
   document.querySelectorAll('#pai-tabs .tab').forEach((t,i)=>t.classList.toggle('active',(view==='candidates'?i===0:i===1)));
   if(view==='candidates') renderPAICandidates(); else renderPAIResults();
 }
+let gepPAIPage=1;
 function renderPAICandidates(){
- const filter=document.getElementById('pai-class-filter')?.value||'__ALL__'; const query=(document.getElementById('pai-search-candidate')?.value||'').toLowerCase();
- let list=[...allStudents]; if(filter!=='__ALL__') list=list.filter(s=>normalizeClasseKey(s.classe)===filter);
- if(query) list=list.filter(s=>`${s.nom||''} ${s.prenoms||''} ${s.matricule||''}`.toLowerCase().includes(query));
- const tbody=document.querySelector('#pai-candidates-table tbody'); if(!tbody)return; tbody.innerHTML='';
- list.forEach(s=>{ const prior=allPAIResults.filter(r=>String(r.matricule)===String(s.matricule)).sort((a,b)=>String(b.at).localeCompare(String(a.at)))[0]; const tr=document.createElement('tr');
- tr.innerHTML=`<td>${escapeHtml(s.matricule)}</td><td>${escapeHtml((s.nom||'')+' '+(s.prenoms||''))}</td><td>${escapeHtml(s.classe||'')}</td><td>${prior?fmtDateTime(prior.at):'Aucune'}</td><td><button type="button" class="btn" style="background:#0f766e;color:white;padding:6px 9px" data-pai-start="${escapeHtml(s.matricule)}"><i class="fa fa-play"></i> ${prior?'Nouvelle passation':'Commencer'}</button></td>`; tbody.appendChild(tr);
+ const filter=document.getElementById('pai-class-filter')?.value||'__ALL__';
+ const query=(document.getElementById('pai-search-candidate')?.value||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
+ let list=filter==='__ALL__'?[]:allStudents.filter(st=>normalizeClasseKey(st.classe)===filter);
+ if(query)list=list.filter(st=>[st.nom,st.prenoms,st.matricule].join(' ').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().includes(query));
+ const tbody=document.querySelector('#pai-candidates-table tbody');if(!tbody)return;tbody.replaceChildren();
+ const pages=Math.max(1,Math.ceil(list.length/20));gepPAIPage=Math.max(1,Math.min(gepPAIPage,pages));
+ const pager=document.getElementById('gep-pai-pages');
+ if(pager){
+  pager.replaceChildren();
+  const prev=document.createElement('button'),next=document.createElement('button'),info=document.createElement('span');
+  prev.type=next.type='button';prev.className=next.className='btn ghost';
+  prev.textContent='Précédent';next.textContent='Suivant';
+  prev.disabled=gepPAIPage===1;next.disabled=gepPAIPage===pages;
+  prev.onclick=()=>{gepPAIPage--;renderPAICandidates()};
+  next.onclick=()=>{gepPAIPage++;renderPAICandidates()};
+  info.textContent=filter==='__ALL__'?'Sélectionnez une classe pour afficher les élèves':`Page ${gepPAIPage} / ${pages} · ${list.length} élève(s)`;
+  pager.append(prev,info,next);
+ }
+ list.slice((gepPAIPage-1)*20,gepPAIPage*20).forEach(st=>{
+  const prior=allPAIResults.filter(r=>String(r.matricule)===String(st.matricule)).sort((a,b)=>String(b.at).localeCompare(String(a.at)))[0];
+  const tr=document.createElement('tr');
+  tr.innerHTML=`<td>${escapeHtml(st.matricule)}</td><td>${escapeHtml((st.nom||'')+' '+(st.prenoms||''))}</td><td>${escapeHtml(st.classe||'')}</td><td>${prior?fmtDateTime(prior.at):'Aucune'}</td><td><button type="button" class="btn" style="background:#0f766e;color:white;padding:6px 9px" data-pai-start="${escapeHtml(st.matricule)}"><i class="fa fa-play"></i> ${prior?'Nouvelle passation':'Commencer'}</button></td>`;
+  tbody.append(tr);
  });
- tbody.querySelectorAll('[data-pai-start]').forEach(b=>b.addEventListener('click',()=>startPAIQuestionnaire(paiStudent(b.dataset.paiStart))));
+ tbody.querySelectorAll('[data-pai-start]').forEach(btn=>btn.addEventListener('click',()=>startPAIQuestionnaire(paiStudent(btn.dataset.paiStart))));
 }
 function renderPAIQuestionnaire(existing=null){
  const container=document.getElementById('pai-questions-container'); container.innerHTML='';
@@ -8110,12 +8146,12 @@ document.getElementById('btn-open-pai-main').addEventListener('click', () => {
     document.getElementById('paiMainPanel').style.display = 'flex';
     document.getElementById('paiMainPanel').style.flexDirection = 'column';
     populateClassFilter();
-    const sel=document.getElementById('pai-class-filter'); sel.innerHTML='<option value="__ALL__">Toutes les classes</option>';
+    const sel=document.getElementById('pai-class-filter'); sel.innerHTML='<option value="__ALL__">Choisir une classe</option>';
     Array.from(document.getElementById('class-filter').options).forEach(opt=>{if(opt.value!=='__ALL__')sel.add(new Option(opt.text,opt.value));});
     switchPAIView('candidates');
   });
-  document.getElementById('pai-class-filter').addEventListener('change',renderPAICandidates);
-  document.getElementById('pai-search-candidate').addEventListener('input',renderPAICandidates);
+  document.getElementById('pai-class-filter').addEventListener('change',()=>{gepPAIPage=1;renderPAICandidates()});
+  document.getElementById('pai-search-candidate').addEventListener('input',()=>{gepPAIPage=1;renderPAICandidates()});
   document.getElementById('pai-search-results').addEventListener('input',renderPAIResults);
   document.getElementById('btn-save-pai').addEventListener('click',savePAIQuestionnaire);
 
@@ -10061,7 +10097,26 @@ function init(){
    const st=(typeof regStudentList==='function'?regStudentList():[]).find(x=>String(x.matricule||'').trim().toUpperCase()===mat);
    if(!st){alert('Sélectionnez un élève inscrit au registre.');return}
    if(typeof regSelectStudent==='function')regSelectStudent(st);
-   if(typeof regBridge==='function')regBridge(selectedModule);
+   const target={lycam:'lycamMainPanel',pai:'paiMainPanel',coeffe:'coeffeMainPanel'}[selectedModule];
+   if(!target){alert('Choisissez un test.');return;}
+   const nav=document.querySelector('.side-link[data-target="'+target+'"]');
+   if(nav)nav.click();
+   if(selectedModule==='lycam'){
+     if(typeof startLycamTest!=='function'){alert('Formulaire LYCAM indisponible.');return;}
+     startLycamTest(st);return;
+   }
+   if(selectedModule==='pai'){
+     if(typeof startPAIQuestionnaire!=='function'){alert('Formulaire PAI indisponible.');return;}
+     startPAIQuestionnaire(st);return;
+   }
+   if(selectedModule==='coeffe'){
+     const cls=document.getElementById('coeffe-class');
+     if(cls){const wanted=String(st.classe||'').trim();const option=Array.from(cls.options).find(o=>o.value===wanted||o.textContent.trim()===wanted);if(option){cls.value=option.value;cls.dispatchEvent(new Event('change',{bubbles:true}))}}
+     const search=document.getElementById('coeffe-search');if(search){search.value=String(st.matricule||'');search.dispatchEvent(new Event('input',{bubbles:true}))}
+     const button=Array.from(document.querySelectorAll('[data-coeffe-start]')).find(b=>String(b.getAttribute('data-coeffe-start')).trim().toUpperCase()===String(st.matricule).trim().toUpperCase());
+     if(button){button.click();return;}
+     alert('Impossible d’ouvrir le test COÉFFÉ de cet élève. Vérifiez sa présence dans la liste.');
+   }
   });
  }
 }
