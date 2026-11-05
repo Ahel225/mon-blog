@@ -1425,6 +1425,52 @@ body[data-workspace="registryPanel"] #registryPanel .reg-actions #btn-add-regist
  #lycam-class-filter,#lycam-search-candidate{width:100%;max-width:100%;min-width:0!important}
 }
 </style>
+
+<style id="gep-clean-mobile-lists-v2">
+/* Présentation sobre, réservée aux petits écrans. Aucun changement aux données. */
+@media(max-width:700px){
+ #rosterPanel .table-wrap, #lycam-view-candidates .table-wrap,
+ #registryPanel .reg-table-wrap{overflow-x:hidden!important;max-height:none!important;border:0!important;background:transparent}
+ #roster tbody,#lycam-candidates-table tbody,#registry-table tbody{display:grid!important;grid-template-columns:minmax(0,1fr);gap:10px}
+ #roster tbody tr,#lycam-candidates-table tbody tr,#registry-table tbody tr{
+   display:grid!important;grid-template-columns:minmax(0,1fr) auto;gap:7px 12px;
+   min-width:0!important;width:100%;padding:13px 14px;border:1px solid #e2e8f0;
+   border-left:3px solid #0ea5e9;border-radius:10px;background:#fff;
+   box-shadow:0 1px 2px rgba(15,23,42,.035);align-items:start
+ }
+ #roster tbody td,#lycam-candidates-table tbody td,#registry-table tbody td{
+   display:block!important;width:auto!important;max-width:100%!important;min-width:0!important;
+   padding:0!important;margin:0!important;border:0!important;white-space:normal!important;
+   overflow-wrap:anywhere;font-size:12px;line-height:1.45;color:#475569
+ }
+ #roster tbody td:nth-child(2),#lycam-candidates-table tbody td:nth-child(2),
+ #registry-table tbody td:nth-child(3){font-size:14px;font-weight:700;color:#0f172a;grid-column:1/-1;grid-row:1}
+ #registry-table{display:block!important;width:100%!important;min-width:0!important}
+ #registry-table thead{display:none!important}
+ #registry-table tbody td:nth-child(1){grid-column:2;grid-row:2;text-align:right!important;color:#94a3b8;font-size:11px}
+ #registry-table tbody td:nth-child(2){grid-column:1;grid-row:2}
+ #registry-table tbody td:nth-child(4){grid-column:1;grid-row:3}
+ #registry-table tbody td:nth-child(4)::before{content:"Classe : ";color:#64748b}
+ #registry-table tbody td:nth-child(5){grid-column:1/-1;grid-row:4}
+ #registry-table tbody td:nth-child(5)::before{content:"Motif : ";color:#64748b}
+ #registry-table tbody td:nth-child(6){grid-column:1;grid-row:5;font-weight:650;color:#0369a1}
+ #registry-table tbody td:nth-child(7){grid-column:1/-1;grid-row:6}
+ #registry-table tbody td:nth-child(7)::before{content:"Prochain RDV : ";color:#64748b}
+ #registry-table tbody td:nth-child(8){grid-column:1/-1;grid-row:7;display:flex!important;gap:8px;flex-wrap:wrap;border-top:1px solid #f1f5f9!important;padding-top:10px!important}
+ #registry-table tbody td:nth-child(8) button{min-height:36px;border-radius:8px}
+ #registryPanel .reg-tools{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px}
+ #registryPanel #reg-search{grid-column:1/-1;width:100%;min-width:0}
+ #registryPanel #reg-status-filter{grid-column:1/-1;width:100%!important;min-width:0}
+ #registryPanel .reg-tools button{width:100%;min-width:0;font-size:12px}
+ #registryPanel .reg-kpis{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+ #registryPanel .reg-kpi{padding:11px;border-radius:9px}
+ #registryPanel .reg-kpi strong{font-size:20px}
+ #registryPanel .reg-editor{padding:12px;border-radius:10px}
+ #registryPanel .reg-form{grid-template-columns:minmax(0,1fr)!important}
+ #registryPanel .reg-form label{grid-column:1!important;min-width:0}
+ #registryPanel .reg-form input,#registryPanel .reg-form select,#registryPanel .reg-form textarea{max-width:100%;min-width:0;width:100%}
+}
+</style>
 </head>
 <body>
 
@@ -1845,7 +1891,7 @@ body[data-workspace="registryPanel"] #registryPanel .reg-actions #btn-add-regist
       </details>
       <div class="reg-bridge"><strong><i class="fa fa-link"></i> Outils associés à l'entretien</strong><span>Choisissez un élève dans le formulaire pour ouvrir son dossier ou un test.</span><div class="reg-bridge-buttons"><button type="button" class="btn ghost" data-reg-module="dossier">Dossier de l'élève</button><button type="button" class="btn ghost" data-reg-module="lycam">Test LYCAM</button><button type="button" class="btn ghost" data-reg-module="pai">Test PAI</button><button type="button" class="btn ghost" data-reg-module="coeffe">Test COÉFFÉ</button><button type="button" class="btn ghost" data-reg-module="bilan">Bilans d'activité</button></div></div>
       <div class="reg-table-wrap"><table id="registry-table"><thead><tr><th>N°</th><th>Date</th><th>Visiteur</th><th>Classe</th><th>Motif</th><th>Statut</th><th>Prochain RDV</th><th>Actions</th></tr></thead><tbody></tbody></table></div>
-      <p id="reg-count" class="reg-count" aria-live="polite"></p>
+      <p id="reg-count" class="reg-count" aria-live="polite"></p><div id="gep-registry-pages" class="gep-pages" aria-label="Pagination du registre"></div>
     </div>
     <div id="trackingGlobalPanel" class="card section" style="display:none; border-top:4px solid var(--tracking-color)">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
@@ -5586,6 +5632,7 @@ function regBridge(module){if(module==='bilan'){const nav=document.querySelector
 function regLocalTime(){const d=new Date();return new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,16)}
 function regReset(){regEditingId=null;['reg-name','reg-class','reg-matricule','reg-contact','reg-observation','reg-action','reg-agent','reg-next'].forEach(id=>{if(regEl(id))regEl(id).value=''});regEl('reg-reason').value='';regEl('reg-student-pick').value='';regEl('reg-student-search').value='';regEl('reg-student-results').hidden=true;regEl('reg-student-selected').textContent='Saisie libre possible pour les visiteurs externes.';regEl('reg-type').value='Élève';regEl('reg-status').value='À traiter';regEl('reg-datetime').value=regLocalTime();regEl('btn-add-registry').innerHTML='<i class="fa fa-save"></i> Enregistrer la consultation'}
 function regDate(v){if(!v)return '—';const d=new Date(v);return isNaN(d)?String(v):d.toLocaleString('fr-FR',{dateStyle:'short',timeStyle:'short'})}
+let gepRegistryPage=1;
 function renderRegistry(){
  const entries=regEntries().slice().sort((a,b)=>String(b.at||'').localeCompare(String(a.at||'')));
  const q=(regEl('reg-search')?.value||'').trim().toLocaleLowerCase('fr');
@@ -5595,12 +5642,27 @@ function renderRegistry(){
  const now=new Date().toISOString().slice(0,10),upcoming=entries.filter(r=>r.nextDate&&r.nextDate>=now&&r.status!=='Terminé').length;
  regEl('reg-kpis').innerHTML=[['Visites',total,'fa-address-book'],['Dossiers ouverts',active,'fa-folder-open'],['Rendez-vous à venir',upcoming,'fa-calendar'],['Clôturés',done,'fa-check-circle']].map(x=>'<div class="reg-kpi"><i class="fa '+x[2]+'"></i><strong>'+x[1]+'</strong><span>'+x[0]+'</span></div>').join('');
  const body=regEl('registry-table')?.querySelector('tbody');if(!body)return;body.textContent='';
- filtered.forEach((r,i)=>{const tr=document.createElement('tr');const fields=[String(filtered.length-i).padStart(3,'0'),regDate(r.at),r.name||'—',r.classe||'—',r.reason||'—',r.status||'À traiter',r.nextDate||'—'];fields.forEach((v,j)=>{const td=document.createElement('td');td.textContent=v;if(j===5)td.className='reg-status';tr.appendChild(td)});
+ const pageCount=Math.max(1,Math.ceil(filtered.length/20));
+ gepRegistryPage=Math.max(1,Math.min(gepRegistryPage,pageCount));
+ const pageItems=filtered.slice((gepRegistryPage-1)*20,gepRegistryPage*20);
+ const pagesEl=regEl('gep-registry-pages');
+ if(pagesEl){
+   pagesEl.replaceChildren();
+   const back=document.createElement('button'),forward=document.createElement('button'),label=document.createElement('span');
+   back.type=forward.type='button';back.className=forward.className='btn ghost';
+   back.textContent='Précédent';forward.textContent='Suivant';
+   back.disabled=gepRegistryPage===1;forward.disabled=gepRegistryPage===pageCount;
+   back.onclick=()=>{gepRegistryPage--;renderRegistry()};
+   forward.onclick=()=>{gepRegistryPage++;renderRegistry()};
+   label.textContent='Page '+gepRegistryPage+' / '+pageCount;
+   pagesEl.append(back,label,forward);
+ }
+ pageItems.forEach((r,i)=>{const tr=document.createElement('tr');const fields=[String(filtered.length-i).padStart(3,'0'),regDate(r.at),r.name||'—',r.classe||'—',r.reason||'—',r.status||'À traiter',r.nextDate||'—'];fields.forEach((v,j)=>{const td=document.createElement('td');td.textContent=v;if(j===5)td.className='reg-status';tr.appendChild(td)});
  const td=document.createElement('td');td.className='reg-row-actions';
  const edit=document.createElement('button');edit.type='button';edit.className='btn ghost';edit.textContent='Ouvrir';edit.onclick=()=>regOpen(r.id);
  const del=document.createElement('button');del.type='button';del.className='btn ghost';del.textContent='Supprimer';del.onclick=async()=>{const ok=typeof appConfirm==='function'?await appConfirm('Supprimer définitivement cette consultation ?'):confirm('Supprimer définitivement cette consultation ?');if(!ok)return;allRegistry=regEntries().filter(x=>x.id!==r.id);storage.save('GlobalRegistryData',allRegistry);renderRegistry()};
  td.append(edit,del);tr.append(td);body.append(tr)});
- regEl('reg-count').textContent=filtered.length+' consultation(s) affichée(s) sur '+total;
+ regEl('reg-count').textContent=filtered.length+' consultation(s) trouvée(s) sur '+total+' · '+pageItems.length+' affichée(s)';
 }
 function regOpen(id){const r=regEntries().find(x=>x.id===id);if(!r)return;regEditingId=id;regFillStudents();regEl('reg-student-pick').value=regStudentList().some(s=>String(s.matricule)===String(r.matricule))?String(r.matricule):'';regEl('reg-student-search').value=r.name||'';regEl('reg-student-results').hidden=true;regEl('reg-student-selected').textContent=r.matricule?'Consultation liée au matricule '+r.matricule:'Visiteur externe';const data={'reg-datetime':r.at,'reg-name':r.name,'reg-type':r.type,'reg-contact':r.contact,'reg-reason':r.reason,'reg-class':r.classe,'reg-matricule':r.matricule,'reg-status':r.status||'À traiter','reg-next':r.nextDate,'reg-agent':r.agent,'reg-observation':r.observation,'reg-action':r.action};Object.entries(data).forEach(([id,value])=>{const el=regEl(id);if(!el)return;if(id==='reg-datetime'){const d=new Date(value);el.value=value&&!isNaN(d)?new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,16):regLocalTime()}else if(id==='reg-reason'&&value&&![...el.options].some(o=>o.value===value)){el.add(new Option(value,value));el.value=value}else el.value=value||''});regEl('btn-add-registry').textContent='Enregistrer les modifications';regEl('reg-editor').open=true;regEl('reg-editor').scrollIntoView({behavior:'smooth',block:'start'})}
 function addRegistryEntry(){
@@ -5615,13 +5677,13 @@ function addRegistryEntry(){
   storage.save('GlobalRegistryData',next);
   const check=storage.load('GlobalRegistryData',[]);
   if(!Array.isArray(check)||!check.some(x=>x.id===entry.id)){throw new Error('La vérification de la sauvegarde locale a échoué.')} 
-  allRegistry=next;regReset();renderRegistry();
+  allRegistry=next;regReset();renderRegistry();regEl('reg-editor').open=false;
   const status=regEl('reg-save-status');if(status){status.textContent=previous?'Consultation modifiée et enregistrée.':'Consultation enregistrée avec succès.';status.hidden=false}
  }catch(error){console.error('Erreur enregistrement registre :',error);alert('Enregistrement impossible : '+(error?.message||'erreur inconnue')+'. Les informations saisies sont conservées.');}
 }
 function regExport(){const fields=[['at','Date'],['type','Type'],['name','Visiteur'],['classe','Classe'],['matricule','Matricule'],['contact','Contact'],['reason','Motif'],['status','Statut'],['nextDate','Prochain RDV'],['agent','Inspecteur'],['observation','Compte rendu'],['action','Actions']];const rows=[fields.map(x=>x[1]),...regEntries().map(r=>fields.map(x=>x[0]==='at'?regDate(r.at):r[x[0]]||''))];const csv='\ufeff'+rows.map(row=>row.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(';')).join('\r\n');const url=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));const a=document.createElement('a');a.href=url;a.download='registre_consultations_'+new Date().toISOString().slice(0,10)+'.csv';a.click();setTimeout(()=>URL.revokeObjectURL(url),2000)}
 function regPrint(){const rows=regEntries().slice().sort((a,b)=>String(b.at||'').localeCompare(String(a.at||'')));const html='<!doctype html><html lang="fr"><meta charset="utf-8"><title>Registre des consultations</title><style>body{font:12px Arial;padding:22px;color:#111}h1{font-size:20px}table{width:100%;border-collapse:collapse}th,td{border:1px solid #555;padding:6px;text-align:left;vertical-align:top}th{background:#eee}@media print{@page{size:A4 landscape;margin:12mm}}</style><h1>Registre des consultations — '+regSafe(regEl('school-year')?.value||'')+'</h1><p>Édité le '+regSafe(new Date().toLocaleDateString('fr-FR'))+' · '+rows.length+' consultation(s)</p><table><thead><tr><th>Date</th><th>Visiteur</th><th>Classe</th><th>Motif</th><th>Statut</th><th>RDV</th><th>Inspecteur</th></tr></thead><tbody>'+rows.map(r=>'<tr>'+[regDate(r.at),r.name,r.classe,r.reason,r.status,r.nextDate,r.agent].map(v=>'<td>'+regSafe(v||'—')+'</td>').join('')+'</tr>').join('')+'</tbody></table><p>Document professionnel — diffusion restreinte.</p></html>';const w=window.open('','_blank');if(!w){alert('Autorisez les fenêtres contextuelles pour imprimer.');return}w.document.write(html);w.document.close();w.focus();w.print()}
-document.addEventListener('DOMContentLoaded',()=>{regEl('btn-add-registry')?.addEventListener('click',addRegistryEntry);regEl('reg-student-search')?.addEventListener('input',()=>{regEl('reg-student-pick').value='';regRenderStudentMatches()});regEl('reg-student-search')?.addEventListener('keydown',e=>{if(e.key==='Escape'){regEl('reg-student-results').hidden=true}else if(e.key==='Enter'){const first=regEl('reg-student-results')?.querySelector('.reg-student-option');if(first){e.preventDefault();first.click()}}});regFillStudents();regEl('reg-student-pick')?.addEventListener('change',e=>{const st=regStudentList().find(s=>String(s.matricule)===e.target.value);if(st){regEl('reg-name').value=[st.nom,st.prenoms||st.prenom].filter(Boolean).join(' ');regEl('reg-class').value=st.classe||'';regEl('reg-matricule').value=st.matricule||'';regEl('reg-type').value='Élève'}});document.querySelectorAll('[data-reg-module]').forEach(b=>b.addEventListener('click',()=>regBridge(b.dataset.regModule)));document.addEventListener('gestionnaire:students-loaded',regFillStudents);regEl('reg-search')?.addEventListener('input',renderRegistry);regEl('reg-status-filter')?.addEventListener('change',renderRegistry);regEl('reg-cancel')?.addEventListener('click',regReset);regEl('reg-export')?.addEventListener('click',regExport);regEl('reg-print')?.addEventListener('click',regPrint);if(!regEl('reg-datetime')?.value)regEl('reg-datetime').value=regLocalTime()});
+document.addEventListener('DOMContentLoaded',()=>{regEl('btn-add-registry')?.addEventListener('click',addRegistryEntry);regEl('reg-student-search')?.addEventListener('input',()=>{regEl('reg-student-pick').value='';regRenderStudentMatches()});regEl('reg-student-search')?.addEventListener('keydown',e=>{if(e.key==='Escape'){regEl('reg-student-results').hidden=true}else if(e.key==='Enter'){const first=regEl('reg-student-results')?.querySelector('.reg-student-option');if(first){e.preventDefault();first.click()}}});regFillStudents();regEl('reg-student-pick')?.addEventListener('change',e=>{const st=regStudentList().find(s=>String(s.matricule)===e.target.value);if(st){regEl('reg-name').value=[st.nom,st.prenoms||st.prenom].filter(Boolean).join(' ');regEl('reg-class').value=st.classe||'';regEl('reg-matricule').value=st.matricule||'';regEl('reg-type').value='Élève'}});document.querySelectorAll('[data-reg-module]').forEach(b=>b.addEventListener('click',()=>regBridge(b.dataset.regModule)));document.addEventListener('gestionnaire:students-loaded',regFillStudents);regEl('reg-search')?.addEventListener('input',()=>{gepRegistryPage=1;renderRegistry()});regEl('reg-status-filter')?.addEventListener('change',()=>{gepRegistryPage=1;renderRegistry()});regEl('reg-cancel')?.addEventListener('click',regReset);regEl('reg-export')?.addEventListener('click',regExport);regEl('reg-print')?.addEventListener('click',regPrint);if(!regEl('reg-datetime')?.value)regEl('reg-datetime').value=regLocalTime()});
 /* ====== TRACKING & COACHING GLOBAL LOGIC (NEW) ====== */
 function switchTrackingView(view) {
     document.getElementById('track-view-visits').style.display = (view === 'visits') ? 'flex' : 'none';
