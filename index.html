@@ -1520,21 +1520,89 @@ body[data-workspace="registryPanel"] #registryPanel .reg-actions #btn-add-regist
  #pai-candidates-table tbody td:nth-child(5){grid-column:1/-1;border-top:1px solid #f1f5f9!important;padding-top:9px!important}
  #pai-candidates-table tbody td:nth-child(5) button{width:100%;min-height:38px}
 }
-</style></head>
+</style>
+<style id="gep-exact-dashboard-reference">
+body{background:#f1f5fa!important}
+.container{max-width:1600px!important}
+.gep-topbar{position:relative!important;background:linear-gradient(110deg,#102c4c,#1d426e)!important;color:#fff!important;border-radius:0!important;margin:0!important;padding:12px 18px!important;display:grid!important;grid-template-columns:52px minmax(0,1fr) 52px;gap:12px;align-items:center;min-height:90px}
+.gep-topbar .brand{min-width:0;display:flex;align-items:center;gap:14px}
+.gep-brand-title{font-weight:800;font-size:clamp(18px,3vw,29px);line-height:1.15;color:#fff}
+.gep-topbar .subtitle{color:#d8e5f7!important;font-size:clamp(11px,1.9vw,16px);line-height:1.3}
+.gep-brand-mark{font-size:30px;display:grid;color:#fff;line-height:1;min-width:52px;text-align:center}
+.gep-brand-mark i:last-child{font-size:20px;color:#e6b982}
+.gep-top-menu,.gep-account-btn{border:0;background:transparent;color:#fff;cursor:pointer;display:grid;place-items:center;font-size:27px;min-height:46px;border-radius:10px}
+.gep-account-btn{background:#386da2;border-radius:50%;width:46px;height:46px}
+.gep-account-popover{position:absolute;right:12px;top:75px;z-index:150;background:white;color:#18304d;box-shadow:0 8px 24px #152e4a35;border:1px solid #d7e1ef;padding:15px;border-radius:12px;width:230px}
+.gep-account-popover[hidden]{display:none!important}
+.gep-account-popover p{font-size:12px;color:#64748b;margin:8px 0}
+.gep-dashboard{border:0!important;box-shadow:none!important;background:transparent!important;padding:0!important;max-width:100%;min-width:0}
+.gep-dashboard .home-hero{background:linear-gradient(105deg,#f6f9ff,#edf3fa)!important;border:1px solid #d6e1ee!important;border-radius:16px!important;min-height:130px!important;padding:22px 25px!important;display:flex!important;align-items:center;justify-content:space-between;box-shadow:0 3px 12px #142d4b12;margin-bottom:20px}
+.gep-welcome{border-left:4px solid #2365b6;padding-left:17px}
+.gep-welcome p{font-size:17px;font-weight:700;color:#1d5ca8;margin:0}
+.gep-welcome h1{font-size:clamp(22px,3vw,32px)!important;color:#112743!important;margin:4px 0!important;line-height:1.15}
+.gep-welcome>div{color:#536780;font-size:clamp(12px,1.7vw,16px)}
+.gep-dashboard .home-hero-icon{display:flex!important;flex-direction:column;align-items:center;color:#1d4e83!important;font-size:32px;opacity:.85}
+.gep-dashboard .home-hero-icon i:last-child{font-size:26px}
+.gep-dashboard #home-sex-counts{position:absolute!important;left:-99999px!important;width:1px!important;height:1px!important;overflow:hidden!important}
+.gep-home-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:0 0 18px}
+.gep-stat{min-width:0;background:linear-gradient(145deg,#fff,#f2f6fc);border:1px solid #d6e0ed;border-radius:15px;box-shadow:0 3px 10px #193b6012;min-height:100px;padding:15px 10px;display:flex;gap:12px;align-items:center;justify-content:center;color:#142c4d}
+.gep-stat>i{font-size:clamp(22px,3vw,32px);color:#2867a9;flex-shrink:0}
+.gep-stat>div{min-width:0;text-align:center}
+.gep-stat span{display:block;font-size:clamp(11px,1.6vw,15px);font-weight:700;line-height:1.25}
+.gep-stat strong{display:block;font-size:clamp(22px,3.2vw,36px);font-variant-numeric:tabular-nums;line-height:1.2;margin:5px 0}
+.gep-stat small{font-size:11px;background:#dce9f8;padding:3px 7px;border-radius:20px;white-space:nowrap}
+.gep-stat-total{background:linear-gradient(135deg,#244d7d,#142e52);color:white;border-color:#244d7d}
+.gep-stat-total>i{color:white}
+.gep-home-group{background:linear-gradient(145deg,#fafdff,#f4f7fb);border:1px solid #d9e3ef;border-radius:17px;padding:16px;margin:0 0 17px;box-shadow:0 3px 12px #1b39530d}
+.gep-home-group h2{display:flex;align-items:center;gap:12px;color:#102b4d!important;font-size:clamp(17px,2.3vw,23px)!important;margin:0 0 15px!important}
+.gep-home-group h2:after{content:"";height:2px;flex:1;background:linear-gradient(90deg,#d5e5f8,#2867b0);margin-left:4px}
+.gep-home-group h2 i{color:#1e568d}
+.gep-dashboard .home-tiles{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:12px!important}
+.gep-dashboard .gep-home-group:last-of-type .home-tiles{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+.gep-dashboard .home-tile{min-width:0;min-height:125px!important;border-radius:14px!important;border:1px solid #d7e2ee!important;background:linear-gradient(145deg,#fff,#f1f6fc)!important;box-shadow:0 3px 8px #173b5710;display:flex!important;align-items:center!important;justify-content:center;text-align:center!important;gap:9px!important;padding:14px 9px!important}
+.gep-dashboard .home-tile i{font-size:31px!important;color:#2868ab!important}
+.gep-dashboard .home-tile strong{font-size:clamp(12px,1.8vw,18px)!important;color:#102744;line-height:1.2}
+.gep-dashboard .home-tile span{font-size:11px!important;text-align:center!important}
+.gep-home-registry .home-tile{min-height:88px!important;background:linear-gradient(115deg,#e8f1fb,#f8fbff)!important;border-left:4px solid #2366ac!important}
+.gep-home-backup{background:#f7faff;border:1px solid #d7e1ed;border-radius:14px;padding:13px 16px;display:flex;align-items:center;gap:13px;box-shadow:0 2px 9px #1639590c}
+.gep-home-backup>i{font-size:24px;color:#2869aa}
+.gep-home-backup span{flex:1;font-size:12px;color:#34465e}
+.gep-home-backup button{background:#205d9e;color:white;border:0;border-radius:11px;padding:11px 14px;font-weight:700;cursor:pointer}
+@media(max-width:760px){
+ .gep-topbar{grid-template-columns:35px minmax(0,1fr) 42px;gap:7px;padding:9px!important;min-height:77px}
+ .gep-brand-mark{min-width:34px;font-size:22px}.gep-brand-mark i:last-child{font-size:15px}
+ .gep-topbar .brand{gap:7px}.gep-top-menu{font-size:22px}
+ .gep-account-btn{width:39px;height:39px;font-size:22px}
+ .gep-dashboard .home-hero{min-height:116px!important;padding:16px!important}
+ .gep-home-stats{gap:6px}
+ .gep-stat{padding:10px 3px;gap:4px;min-height:83px;flex-direction:column}
+ .gep-stat>i{font-size:19px}
+ .gep-stat span{font-size:10px}
+ .gep-stat strong{font-size:22px}
+ .gep-stat small{font-size:9px;padding:2px 4px}
+ .gep-home-group{padding:11px}
+ .gep-dashboard .home-tiles{gap:7px!important}
+ .gep-dashboard .home-tile{min-height:105px!important;padding:9px 4px!important;gap:6px!important}
+ .gep-dashboard .home-tile i{font-size:23px!important}
+ .gep-dashboard .home-tile strong{font-size:12px!important}
+ .gep-dashboard .home-tile span{font-size:10px!important}
+ .gep-home-backup{flex-wrap:wrap}.gep-home-backup button{width:100%}
+}
+@media(max-width:500px){.gep-dashboard .home-tiles{grid-template-columns:repeat(2,minmax(0,1fr))!important}.gep-dashboard .gep-home-group:last-of-type .home-tiles{grid-template-columns:repeat(2,minmax(0,1fr))!important}.gep-home-stats{grid-template-columns:repeat(4,minmax(0,1fr))}.gep-welcome h1{font-size:22px!important}.gep-dashboard .home-hero-icon{font-size:24px}.gep-brand-title{font-size:16px}}
+/* Le menu latéral devient un tiroir sur mobile, commandé depuis l'en-tête. */
+@media(min-width:901px){body.gep-drawer-open #main-side-nav{display:block!important}}\n@media(max-width:900px){#mobile-nav-toggle{display:none!important}#main-side-nav{position:fixed!important;top:0!important;left:0!important;bottom:0!important;width:min(300px,85vw)!important;z-index:300!important;overflow-y:auto!important;background:#fff!important;box-shadow:10px 0 30px #0b203c30!important;transform:translateX(-110%);transition:transform .2s ease;display:block!important}body.gep-drawer-open #main-side-nav{transform:translateX(0)!important}body.gep-drawer-open:before{content:"";position:fixed;inset:0;background:#061a3480;z-index:299}}
+</style>
+</head>
 <body>
 
 <div class="container">
   
-  <header class="header">
-    <div class="brand">
-      <div class="logo">GE</div>
-      <div>
-        <div style="font-weight:800;font-size:18px">Gestionnaire d'Élèves</div>
-        <div class="subtitle">v7.4 · Koubi Seri Fils · Gestion scolaire et orientation</div>
-      </div>
-    </div>
-    <div class="chip" id="status"><i class="fa fa-check-circle" style="color:var(--accent)"></i> Prêt</div>
-  </header>
+  <header class="header gep-topbar">
+<button type="button" class="gep-top-menu" id="gep-top-menu" aria-label="Ouvrir le menu" aria-controls="main-side-nav" aria-expanded="false"><i class="fa fa-bars"></i></button>
+<div class="brand"><div class="gep-brand-mark"><i class="fa fa-graduation-cap"></i><i class="fa fa-book"></i></div><div><div class="gep-brand-title">Gestionnaire d’Élèves Pro</div><div class="subtitle">Orientation scolaire et professionnelle</div></div></div>
+<button type="button" class="gep-account-btn" id="gep-account-btn" aria-label="Compte utilisateur" aria-expanded="false"><i class="fa fa-user"></i></button>
+<div class="gep-account-popover" id="gep-account-popover" hidden><strong>Espace utilisateur</strong><p>Gestionnaire d’Élèves Pro</p><span id="status">Prêt</span></div>
+</header>
 
 <!-- Contrôles historiques nécessaires aux fonctions JavaScript ; invisibles dans l’interface. -->
 <div id="v737-compat-controls" hidden style="display:none!important" aria-hidden="true"><button type="button" id="btn-open-cio"></button><button type="button" id="btn-open-class-results"></button><button type="button" id="btn-open-lycam-main"></button><button type="button" id="btn-open-pai-main"></button><button type="button" id="btn-open-rankings"></button><button type="button" id="btn-open-registry"></button><button type="button" id="btn-open-stats"></button><button type="button" id="btn-open-tracking"></button><button type="button" id="refresh-roster"></button><input type="file" id="excel-file" accept=".xls,.xlsx"></div>
@@ -1574,20 +1642,18 @@ body[data-workspace="registryPanel"] #registryPanel .reg-actions #btn-add-regist
 <div class="sidebar-heading">Données</div>
 <button type="button" class="side-link" data-target="excel-center"><i class="fa fa-file-excel"></i> Importer un fichier Excel</button>
 </nav><main class="app-main" id="app-main">
-<section id="homePanel" class="card section" aria-label="Page d’accueil">
- <div class="home-hero"><div><p class="home-eyebrow">ESPACE DE TRAVAIL</p><h1>Bienvenue dans Gestionnaire d’Élèves Pro</h1><p>Accédez rapidement aux élèves, aux résultats scolaires, aux outils d’orientation et à l’administration.</p><span id="home-year-label" class="home-year">Année scolaire : —</span><div id="home-sex-counts" class="home-sex-counts" hidden aria-live="polite"></div></div><div class="home-hero-icon"><i class="fa fa-graduation-cap"></i></div></div>
- <h2 class="home-heading">Accès rapide</h2>
- <div class="home-tiles">
- <button type="button" class="home-tile" data-home-target="rosterPanel"><i class="fa fa-users"></i><strong>Élèves et classes</strong><span>Consulter les dossiers</span></button>
- <button type="button" class="home-tile" data-home-target="classResultsPanel"><i class="fa fa-pen"></i><strong>Résultats scolaires</strong><span>Moyennes trimestrielles</span></button>
- <button type="button" class="home-tile" data-home-target="cioPanel"><i class="fa fa-table"></i><strong>Rapport CIO</strong><span>Analyses et export Excel</span></button>
- <button type="button" class="home-tile" data-home-target="excel-center"><i class="fa fa-file-excel"></i><strong>Importation Excel</strong><span>Listes et résultats</span></button>
- <button type="button" class="home-tile" data-home-target="lycamMainPanel"><i class="fa fa-clipboard-check"></i><strong>Test LYCAM</strong><span>Passations et résultats</span></button>
- <button type="button" class="home-tile" data-home-target="paiMainPanel"><i class="fa fa-clipboard-list"></i><strong>PAI</strong><span>Accompagnement des élèves</span></button>
- <button type="button" class="home-tile" data-home-target="coeffeMainPanel"><i class="fa fa-book-open"></i><strong>Test Coéffé</strong><span>Méthodes d’étude</span></button>
- </div>
- <div class="home-secondary"><button type="button" data-home-target="rankingsPanel">Classements</button><button type="button" data-home-target="statsPanel">Statistiques</button><button type="button" data-home-target="registryPanel">Registre</button><button type="button" data-home-target="trackingGlobalPanel">Suivi et coaching</button></div>
- </section>
+<section id="homePanel" class="card section gep-dashboard" aria-label="Page d’accueil">
+<div class="home-hero"><div class="gep-welcome"><p>Bienvenue,</p><h1>Koubi Seri Fils</h1><div>Inspecteur d’orientation – MENAET</div><span id="home-year-label" class="home-year">Année scolaire : —</span></div><div class="home-hero-icon"><i class="fa fa-book" aria-hidden="true"></i><i class="fa fa-graduation-cap" aria-hidden="true"></i></div></div>
+<div id="home-sex-counts" class="home-sex-counts" hidden aria-live="polite"></div>
+<div class="gep-home-stats">
+<div class="gep-stat gep-stat-total"><i class="fa fa-users"></i><div><span>Effectif total</span><strong id="gep-stat-total">—</strong></div></div>
+<div class="gep-stat"><i class="fa fa-female"></i><div><span>Filles</span><strong id="gep-stat-girls">—</strong><small id="gep-stat-girls-pct"></small></div></div>
+<div class="gep-stat"><i class="fa fa-male"></i><div><span>Garçons</span><strong id="gep-stat-boys">—</strong><small id="gep-stat-boys-pct"></small></div></div>
+<div class="gep-stat"><i class="fa fa-chalkboard-teacher"></i><div><span>Classes</span><strong id="gep-stat-classes">—</strong></div></div>
+</div>
+<section class="gep-home-group"><h2><i class="fa fa-users" aria-hidden="true"></i> Gestion des élèves</h2><div class="home-tiles"><button type="button" class="home-tile" data-home-target="rosterPanel"><i class="fa fa-users" aria-hidden="true"></i><strong>Élèves et classes</strong></button><button type="button" class="home-tile" data-home-target="excel-center"><i class="fa fa-file-excel-o" aria-hidden="true"></i><strong>Importation Excel</strong></button><button type="button" class="home-tile" data-home-target="classResultsPanel"><i class="fa fa-bar-chart" aria-hidden="true"></i><strong>Résultats scolaires</strong></button><button type="button" class="home-tile" data-home-target="cioPanel"><i class="fa fa-file-text-o" aria-hidden="true"></i><strong>Rapport CIO</strong></button></div></section><section class="gep-home-group"><h2><i class="fa fa-compass" aria-hidden="true"></i> Suivi et orientation</h2><div class="home-tiles"><button type="button" class="home-tile" data-home-target="trackingGlobalPanel"><i class="fa fa-user-plus" aria-hidden="true"></i><strong>Suivi et coaching</strong></button><button type="button" class="home-tile" data-home-target="lycamMainPanel"><i class="fa fa-clipboard" aria-hidden="true"></i><strong>Test LYCAM</strong></button><button type="button" class="home-tile" data-home-target="paiMainPanel"><i class="fa fa-list-alt" aria-hidden="true"></i><strong>PAI</strong></button><button type="button" class="home-tile" data-home-target="coeffeMainPanel"><i class="fa fa-book" aria-hidden="true"></i><strong>Test Coéffé</strong></button></div></section><section class="gep-home-group"><h2><i class="fa fa-bar-chart" aria-hidden="true"></i> Analyses et pilotage</h2><div class="home-tiles"><button type="button" class="home-tile" data-home-target="rankingsPanel"><i class="fa fa-trophy" aria-hidden="true"></i><strong>Classements</strong></button><button type="button" class="home-tile" data-home-target="statsPanel"><i class="fa fa-pie-chart" aria-hidden="true"></i><strong>Statistiques</strong></button><button type="button" class="home-tile" data-home-target="g80Hub"><i class="fa fa-layers" aria-hidden="true"></i><strong>Pilotage et suivi</strong><span>Alertes, accompagnements et rapports</span></button></div></section><section class="gep-home-registry"><button type="button" class="home-tile" data-home-target="registryPanel"><i class="fa fa-address-book"></i><strong>Registre des consultations</strong><span>Visiteurs, entretiens et suivi individuel</span></button></section>
+<div class="gep-home-backup"><i class="fa fa-cloud-upload" aria-hidden="true"></i><span id="gep-last-backup">Sauvegarde des données</span><button type="button" id="gep-download-backup"><i class="fa fa-download"></i> Télécharger une sauvegarde</button></div>
+</section>
 <section class="card" id="excel-import-access" style="flex:0 0 auto;border:2px solid #0f766e;background:#f0fdfa;padding:14px;margin-bottom:10px"><div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap"><div style="flex:1;min-width:220px"><strong style="font-size:16px;color:#115e59">Importer un fichier Excel</strong><div style="font-size:12px;color:#475569;margin-top:4px">Listes de classes et moyennes trimestrielles (.xlsx / .xls)</div></div><button type="button" id="ic-open-file" class="btn" style="background:#0f766e;font-size:15px;padding:12px 18px">📂 Choisir un fichier Excel à importer</button><button type="button" id="ic-go-center" class="btn ghost">Afficher les options d'importation</button></div><div id="ic-selected-file" style="font-size:12px;color:#0f766e;margin-top:8px">Aucun fichier sélectionné</div></section>
 <section class="card" id="excel-center" style="flex:0 0 auto;border-top:4px solid #0f766e"><details open><summary style="font-weight:800;cursor:pointer;color:#0f766e">Centre d'importation Excel · listes et résultats — v8.1</summary><div class="year-import-manager" aria-label="Gestion de l’année scolaire"><div class="year-import-heading"><i class="fa fa-calendar-alt"></i> Année scolaire de destination</div><p class="year-import-note">Choisissez l’année avant d’analyser le fichier. Les élèves et les moyennes seront enregistrés uniquement dans cette année.</p>        <div class="field" style="width:140px">
           <label class="label">Année scolaire</label>
@@ -10030,7 +10096,7 @@ function init(){
   nav.prepend(frag);
   find('registryPanel')?.classList.add('gep-nav-registry');
  }
- const home=document.querySelector('#homePanel .home-tiles');
+ const home=null;
  if(home){
   const find=t=>document.querySelector('#homePanel [data-home-target="'+t+'"]');
   const registry=document.createElement('button');
@@ -10119,6 +10185,44 @@ function init(){
    }
   });
  }
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+})();
+</script>
+
+<script id="gep-dashboard-reference-actions">
+(function(){
+function init(){
+ const menu=document.getElementById('gep-top-menu'),nav=document.getElementById('main-side-nav');
+ function close(){document.body.classList.remove('gep-drawer-open');menu?.setAttribute('aria-expanded','false')}
+ menu?.addEventListener('click',()=>{const open=!document.body.classList.contains('gep-drawer-open');document.body.classList.toggle('gep-drawer-open',open);menu.setAttribute('aria-expanded',String(open))});
+ nav?.addEventListener('click',e=>{if(e.target.closest('.side-link'))close()});
+ document.addEventListener('keydown',e=>{if(e.key==='Escape')close()});
+ document.addEventListener('click',e=>{if(document.body.classList.contains('gep-drawer-open')&&!e.target.closest('#main-side-nav,#gep-top-menu'))close()});
+ const acc=document.getElementById('gep-account-btn'),pop=document.getElementById('gep-account-popover');
+ acc?.addEventListener('click',()=>{pop.hidden=!pop.hidden;acc.setAttribute('aria-expanded',String(!pop.hidden))});
+ document.addEventListener('click',e=>{if(!e.target.closest('#gep-account-btn,#gep-account-popover')){pop.hidden=true;acc?.setAttribute('aria-expanded','false')}});
+ // Conserver la source de vérité des effectifs : recopier uniquement les nombres affichés par le tableau de bord existant.
+ const src=document.getElementById('home-sex-counts');
+ function update(){
+  if(!src)return;
+  const chips=Array.from(src.querySelectorAll('.home-sex-chip'));
+  const nums=chips.map(c=>(c.textContent.match(/\d[\d\s.,]*/)||[])[0]||'—');
+  const get=(index)=>nums[index]||'—';
+  const ids=['gep-stat-total','gep-stat-girls','gep-stat-boys'];
+  ids.forEach((id,i)=>{const el=document.getElementById(id);if(el)el.textContent=get(i)});
+  const g=Number(get(1).replace(/[^0-9]/g,'')),b=Number(get(2).replace(/[^0-9]/g,''));
+  if(g+b>0){document.getElementById('gep-stat-girls-pct').textContent=(100*g/(g+b)).toFixed(1).replace('.',',')+' %';document.getElementById('gep-stat-boys-pct').textContent=(100*b/(g+b)).toFixed(1).replace('.',',')+' %'}
+  const classes=new Set((typeof allStudents!=='undefined'&&Array.isArray(allStudents)?allStudents:[]).map(x=>String(x.classe||'').trim()).filter(Boolean));
+  if(classes.size)document.getElementById('gep-stat-classes').textContent=String(classes.size);
+ }
+ if(src){new MutationObserver(update).observe(src,{childList:true,subtree:true,characterData:true,attributes:true,attributeFilter:['hidden']});update()}
+ document.getElementById('gep-download-backup')?.addEventListener('click',()=>{
+  const b=document.querySelector('#g80Hub [data-action="backup"],#g80Hub button[data-action="backup"],#btn-export-backup');
+  if(b)b.click();else alert('La commande de sauvegarde est indisponible depuis cet écran.');
+ });
+ const backup=document.getElementById('gep-last-backup');
+ if(backup){const val=localStorage.getItem('GEP80Data');try{const x=JSON.parse(val);if(x?.lastBackup)backup.textContent='Dernière sauvegarde générée : '+new Date(x.lastBackup).toLocaleString('fr-FR')}catch(e){}}
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();
